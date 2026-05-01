@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Fundo padrão do nosso SaaS (um cinza muito claro, agradável aos olhos) */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
