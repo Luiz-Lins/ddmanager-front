@@ -3,19 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 export default function Dashboard() {
-  // NOVO: Instanciando o motorista de rotas
   const navigate = useNavigate(); 
   
   const [documentNumber, setDocumentNumber] = useState('');
+  // NOVO: Estado para guardar o tipo de certidão (inicia com o ID 1)
+  const [serviceId, setServiceId] = useState('1'); 
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   
   const [emissions, setEmissions] = useState([]);
 
-  // NOVO: Função para encerrar a sessão
   const handleLogout = () => {
-    localStorage.removeItem('@ddmanager:token'); // Remove a chave do cofre
-    navigate('/'); // Manda de volta para a tela de Login
+    localStorage.removeItem('@ddmanager:token'); 
+    navigate('/'); 
   };
 
   const fetchEmissions = async () => {
@@ -39,7 +39,8 @@ export default function Dashboard() {
     try {
       await api.post('/api/emissions/emitir', {
         user_id: 1,       
-        service_id: 1,    
+        // NOVO: Enviamos o ID da certidão que o utilizador escolheu no menu
+        service_id: parseInt(serviceId),    
         parametros: {
           cnpj: documentNumber 
         }
@@ -89,7 +90,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto space-y-8">
         
-        {/* NOVO: Cabeçalho com o botão de Sair */}
+        {/* Cabeçalho */}
         <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Painel de Controle</h1>
@@ -107,12 +108,29 @@ export default function Dashboard() {
           </button>
         </div>
         
-        {/* Formulário de Nova Emissão */}
+        {/* Formulário de Nova Emissão Atualizado */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Nova Solicitação</h2>
           
-          <form onSubmit={handleEmitir} className="flex gap-4 items-end">
-            <div className="flex-1">
+          <form onSubmit={handleEmitir} className="flex flex-col md:flex-row gap-4 items-end">
+            
+            {/* NOVO: Menu Dropdown de Seleção */}
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tipo de Certidão
+              </label>
+              <select
+                value={serviceId}
+                onChange={(e) => setServiceId(e.target.value)}
+                className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white transition-colors"
+              >
+                <option value="1">Receita Federal (CND)</option>
+                <option value="2">FGTS (Regularidade)</option>
+                <option value="3">Trabalhista (CNDT)</option>
+              </select>
+            </div>
+
+            <div className="flex-1 w-full">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 CNPJ / CPF
               </label>
@@ -129,7 +147,7 @@ export default function Dashboard() {
             <button
               type="submit"
               disabled={isLoading}
-              className="py-3 px-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 transition-colors"
+              className="w-full md:w-auto py-3 px-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-70 transition-colors"
             >
               {isLoading ? 'A processar...' : 'Emitir Certidão'}
             </button>
