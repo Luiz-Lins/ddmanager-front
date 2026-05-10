@@ -124,7 +124,7 @@ export default function Dashboard() {
                 onChange={(e) => setServiceId(e.target.value)}
                 className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white transition-colors"
               >
-                <option value="1">Receita Federal (CND)</option>
+                <option value="receita-federal/pgfn">Receita Federal (CND)</option>
                 <option value="2">FGTS (Regularidade)</option>
                 <option value="3">Trabalhista (CNDT)</option>
               </select>
